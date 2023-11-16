@@ -77,8 +77,25 @@
         </div>
     </div>
 </div>
+
+<div id="myModal" style="display: none; position: fixed; z-index: 1; padding-top: 10px; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.9);">
+    <img id="img01" style="margin: auto; display: block; width: 80%;">
+</div>
+
 <script src="/static/plugins/md-toc/md-toc.js"></script>
 <script type="text/javascript">
+
+    var modal = document.getElementById('myModal');
+    var modalImg = document.getElementById('img01');
+    modal.addEventListener('click', function() {
+        this.style.display = "none";
+    });
+
+    function showModal(src) {
+        modal.style.display = "block";
+        modalImg.src = src;
+    }
+
     Layers.bindIframe("[name='history']", "文档修改历史", "508px", "1000px");
     $("[data-toggle='web-popover']").webuiPopover({animation: 'pop',autoHide:3000});
     if (parent.layoutOpen) {

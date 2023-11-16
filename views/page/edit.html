@@ -21,7 +21,24 @@
     </div>
     </form>
 </div>
+
+<div id="myModal" style="display: none; position: fixed; z-index: 1; padding-top: 10px; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.9);">
+    <img id="img01" style="margin: auto; display: block; width: 80%;">
+</div>
+
 <script type="text/javascript">
+
+    var modal = document.getElementById('myModal');
+    var modalImg = document.getElementById('img01');
+    modal.addEventListener('click', function() {
+        this.style.display = "none";
+    });
+
+    function showModal(src) {
+        modal.style.display = "block";
+        modalImg.src = src;
+    }
+
     if(parent.layoutClose) {
         parent.layoutClose();
     }
@@ -113,25 +130,42 @@
                             var url='/image/upload?document_id={{$document.document_id}}&guid='+time;
                             var formData=new FormData();
                             var newImg=new File([img],newname,{type:img.type});
+
+                            console.log(img)
                             console.log(newImg)
                             formData.append('editormd-image-file',newImg);
 
-                            //上传图片
-                            var xhr=new XMLHttpRequest();
-                            //上传结束
-                            xhr.onload=function () {
-                                var data=JSON.parse(xhr.responseText);
-                                console.log(data)
-                                if (data.success === 1) {
-                                    editor.insertValue("![image](" + data.url + "=100)\r\n");
-                                }else {
-                                    alert(data.message)
-                                }
-                            }
+                            // 获取图片数据
+                            let objUrl = URL.createObjectURL(newImg);
+                            let _image = new Image();
+                            _image.onload = function() {
 
-                            xhr.open('POST',url,true);
-                            xhr.send(formData);
-                            //当剪贴板里是图片时，禁止默认的粘贴
+                                // 打印图片宽高
+                                console.log('Width: ' + this.width);
+                                console.log('Height: ' + this.height);
+                                var img_width = this.width;
+                                var img_height = this.height;
+
+                                //上传图片
+                                var xhr=new XMLHttpRequest();
+                                //上传结束
+                                xhr.onload=function () {
+                                    var data=JSON.parse(xhr.responseText);
+                                    console.log(data)
+                                    if (data.success === 1) {
+                                        editor.insertValue("![image](" + data.url + "=" + img_width + "x" + img_height + "=100)\r\n");
+                                    }else {
+                                        alert(data.message)
+                                    }
+                                }
+
+                                xhr.open('POST',url,true);
+                                xhr.send(formData);
+                                //当剪贴板里是图片时，禁止默认的粘贴
+                            };
+                            _image.src = objUrl;
+
+
                             return false;
                         }
                     }
